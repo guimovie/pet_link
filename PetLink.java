@@ -3,7 +3,7 @@ public class PetLink {
     private static Scanner input = new Scanner(System.in);
 
     public static void verAnimais(){
-        
+        String a;
     }
     public static void main(String[] args){
         System.out.println("============================");
