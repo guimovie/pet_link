@@ -15,6 +15,8 @@ public class PetLink {
     };
 
     public static void verAnimais(){
+        limpar();
+        
         // Painel de animais para a adoção
         System.out.println("====================================");
         System.out.println("    ANIMAIS ESPERANDO POR UM LAR    ");
@@ -28,18 +30,21 @@ public class PetLink {
         System.out.print("Escolha um pet: ");
         int n = input.nextInt();
         System.out.printf("O animal escolhido foi %s%n", animais[n-1]);
+        System.out.println("\nDigite algo para voltar ao menu:");
+        input.next();
         
     }
 
-    public static void fecharPrograma(){
+    public static void limpar(){
+        // Limpa o terminal sem fechar o código
         System.out.print("\033[H\033[2J");
         System.out.flush();
-        System.out.println("Saindo...");
     }
     
     public static void main(String[] args){
         int escolha;
         do {
+            limpar();
             // Menu principal com as opções para navegação
             System.out.println("============================");
             System.out.println("    SITE PET LINK - HOME    ");
@@ -63,7 +68,8 @@ public class PetLink {
                     System.out.println("Doação");
                     break;
                 case 4:
-                    fecharPrograma();
+                    limpar();
+                    System.out.println("Saindo...");
                     break;
                 default:
                     System.out.println("Selecione uma opção válida!");
