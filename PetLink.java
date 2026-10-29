@@ -1,6 +1,7 @@
 import java.util.Scanner;
 public class PetLink {
     private static Scanner input = new Scanner(System.in);
+
     private static String[] animais = {
         "Luna (gato)",
         "Mia (gato)",
@@ -15,7 +16,7 @@ public class PetLink {
     };
 
     public static void verAnimais(){
-        limpar();
+        limparTerminal();
         
         // Painel de animais para a adoção
         System.out.println("====================================");
@@ -30,12 +31,67 @@ public class PetLink {
         System.out.print("Escolha um pet: ");
         int n = input.nextInt();
         System.out.printf("O animal escolhido foi %s%n", animais[n-1]);
-        System.out.println("\nDigite algo para voltar ao menu:");
-        input.next();
-        
+        voltarMenu();
     }
 
-    public static void limpar(){
+    public static void moduloAutenticacao(){
+        limparTerminal();
+        System.out.println("==========================");
+        System.out.println("       ÁREA DE ACESSO     ");
+        System.out.println("==========================");
+        System.out.println("1. Fazer Login");
+        System.out.println("2. Realizar Cadastro");
+        System.out.println("3. Voltar");
+        System.out.println("==========================");
+        System.out.println("   SELECIONE UMA OPÇÃO    ");
+        int opcao = input.nextInt();
+        
+        switch (opcao) {
+            case 1:
+                System.out.println("login");
+                break;
+            case 2:
+                System.out.println("cadastro");
+                break;
+            case 3:
+                System.out.println("voltar");
+                break;
+            default:
+                System.out.println("Selecione uma opção válida!");
+                break;
+        }
+        voltarMenu();
+
+    }
+    
+    public static void fazerDoacao(){
+        limparTerminal();
+        // Informações sobre doações para a ONG
+        System.out.println("======================================");
+        System.out.println("       COMO AJUDAR A ONG PATINHAS     ");
+        System.out.println("======================================");
+        System.out.println("Chave PIX Oficial: pix@ongpatinhas.org\n");
+        System.out.println("""
+                        ######  ##  ######
+                        #    #  ##  #    #
+                        ######  # # ######
+                            ##
+                        ### #  #### ##  ##
+                        # #  ###  # #    #
+                        ######  ##  ######
+                """);
+        System.out.println("TODA AJUDA É VÁLIDA!");
+        voltarMenu();
+        
+    }
+    
+    public static void voltarMenu(){
+        System.out.println("\nDigite algo para voltar ao menu:");
+        input.next();
+
+    }
+
+    public static void limparTerminal(){
         // Limpa o terminal sem fechar o código
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -44,7 +100,7 @@ public class PetLink {
     public static void main(String[] args){
         int escolha;
         do {
-            limpar();
+            limparTerminal();
             // Menu principal com as opções para navegação
             System.out.println("============================");
             System.out.println("    SITE PET LINK - HOME    ");
@@ -62,13 +118,13 @@ public class PetLink {
                     verAnimais();
                     break;
                 case 2:
-                    System.out.println("Cadastro/Login");
+                    moduloAutenticacao();;
                     break;
                 case 3:
-                    System.out.println("Doação");
+                    fazerDoacao();
                     break;
                 case 4:
-                    limpar();
+                    limparTerminal();
                     System.out.println("Saindo...");
                     break;
                 default:
