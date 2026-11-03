@@ -14,6 +14,7 @@ public class PetLink {
         "Max (cachorro)",
         "Lola (cachorro)"
     };
+    private static int quantidadeAnimais = animais.length;
 
     private static final String admLogin = "adm123"; 
     private static final String admSenha = "senha123"; 
@@ -39,14 +40,24 @@ public class PetLink {
         System.out.println("    ANIMAIS ESPERANDO POR UM LAR    ");
         System.out.println("====================================");
 
+        if (quantidadeAnimais == 0) {
+            System.out.println("Nenhum animal disponível no momento.");
+            voltarMenu();
+            return;
+        }
+
         // Exibe os animais que estão na lista de adoção
-        for (int i = 0; i < animais.length; i++){
+        for (int i = 0; i < quantidadeAnimais; i++){
             System.out.printf("%d. %s%n", i + 1, animais[i]);
         }
 
         System.out.print("Escolha um pet: ");
         int n = input.nextInt();
-        System.out.printf("O animal escolhido foi %s%n", animais[n-1]);
+        if (n < 1 || n > quantidadeAnimais) {
+            System.out.println("Selecione um número válido!");
+        } else {
+            System.out.printf("O animal escolhido foi %s%n", animais[n - 1]);
+        }
         voltarMenu();
     }
 
@@ -95,6 +106,7 @@ public class PetLink {
         if (loginInput.equals(admLogin) && senhaInput.equals(admSenha)) {
             acessoADM = true;
             System.out.println("Acesso concedido para administrador :)");
+            menuAdministrador();
             return;
         }
 
@@ -107,6 +119,103 @@ public class PetLink {
         }
 
         System.out.println("Acesso Negado!");
+    }
+
+    private static void menuAdministrador() {
+        while (acessoADM) {
+            limparTerminal();
+            System.out.println("===============================");
+            System.out.println("     MENU DO ADMINISTRADOR     ");
+            System.out.println("===============================");
+            System.out.println("1. Adicionar animal");
+            System.out.println("2. Retirar animal");
+            System.out.println("3. Sair da área administrativa");
+            System.out.print("Escolha uma opção: ");
+            int opcao = input.nextInt();
+
+            switch (opcao) {
+                case 1:
+                    adicionarAnimal();
+                    break;
+                case 2:
+                    retirarAnimal();
+                    break;
+                case 3:
+                    acessoADM = false;
+                    System.out.println("Você saiu da área administrativa.");
+                    break;
+                default:
+                    System.out.println("Selecione uma opção válida!");
+                    break;
+            }
+
+            if (acessoADM) {
+                voltarMenu();
+            }
+        }
+    }
+
+    private static void adicionarAnimal() {
+        if (!acessoADM) {
+            System.out.println("Acesso negado. Apenas o administrador pode alterar a lista.");
+            return;
+        }
+
+        input.nextLine();
+        System.out.print("Digite o nome e a espécie do animal: ");
+        String animal = input.nextLine().trim();
+
+        if (animal.isEmpty()) {
+            System.out.println("O nome do animal não pode ficar vazio.");
+            return;
+        }
+
+        garantirCapacidadeAnimais();
+        animais[quantidadeAnimais] = animal;
+        quantidadeAnimais++;
+        System.out.println("Animal adicionado com sucesso!");
+    }
+
+    private static void retirarAnimal() {
+        if (!acessoADM) {
+            System.out.println("Acesso negado. Apenas o administrador pode alterar a lista.");
+            return;
+        }
+
+        if (quantidadeAnimais == 0) {
+            System.out.println("Não há animais para retirar.");
+            return;
+        }
+
+        System.out.println("Animais disponíveis:");
+        for (int i = 0; i < quantidadeAnimais; i++) {
+            System.out.printf("%d. %s%n", i + 1, animais[i]);
+        }
+
+        System.out.print("Digite o número do animal que deseja retirar: ");
+        int numero = input.nextInt();
+        if (numero < 1 || numero > quantidadeAnimais) {
+            System.out.println("Selecione um número válido!");
+            return;
+        }
+
+        String animalRemovido = animais[numero - 1];
+        for (int i = numero - 1; i < quantidadeAnimais - 1; i++) {
+            animais[i] = animais[i + 1];
+        }
+        quantidadeAnimais--;
+        animais[quantidadeAnimais] = null;
+        System.out.printf("%s foi retirado da lista.%n", animalRemovido);
+    }
+
+    private static void garantirCapacidadeAnimais() {
+        if (quantidadeAnimais == animais.length) {
+            String[] novosAnimais = new String[animais.length * 2];
+            for (int i = 0; i < animais.length; i++) {
+                novosAnimais[i] = animais[i];
+            }
+            animais = novosAnimais;
+        }
     }
     
     public static void cadastroUsuario(){
