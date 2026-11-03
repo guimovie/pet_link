@@ -86,6 +86,11 @@ public class PetLink {
                 moduloAutenticacao();
                 break;
         }
+
+        if (acessoUsuario) {
+            System.out.println("Sessão de usuário ativa.");
+        }
+
         voltarMenu();
         
     }
