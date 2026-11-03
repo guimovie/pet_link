@@ -15,6 +15,22 @@ public class PetLink {
         "Lola (cachorro)"
     };
 
+    private static final String admLogin = "adm123"; 
+    private static final String admSenha = "senha123"; 
+    private static String[] usuarioLogin = new String[20];
+    private static String[] usuarioSenha = new String[20];
+    private static boolean acessoADM = false;
+    private static boolean acessoUsuario = false;
+
+    static {
+        usuarioLogin[0] = "joão123";
+        usuarioLogin[1] = "jose135";
+        usuarioLogin[2] = "maria133";
+        usuarioSenha[0] = "senha333";
+        usuarioSenha[1] = "senha443";
+        usuarioSenha[2] = "senha379";
+    }
+
     public static void verAnimais(){
         limparTerminal();
         
@@ -48,22 +64,72 @@ public class PetLink {
         
         switch (opcao) {
             case 1:
-                System.out.println("login");
+                login();
                 break;
             case 2:
-                System.out.println("cadastro");
+                cadastroUsuario();
                 break;
             case 3:
-                System.out.println("voltar");
-                break;
+                return;
             default:
-                System.out.println("Selecione uma opção válida!");
+                moduloAutenticacao();
                 break;
         }
         voltarMenu();
-
+        
     }
     
+    public static void login(){
+        limparTerminal();
+        System.out.println("=================");
+        System.out.println("      LOGIN      ");
+        System.out.println("=================");
+        System.out.print("Usuário: ");
+        String loginInput = input.next(); 
+        System.out.print("\nSenha: ");
+        String senhaInput = input.next();
+
+        acessoUsuario = false;
+        acessoADM = false;
+
+        if (loginInput.equals(admLogin) && senhaInput.equals(admSenha)) {
+            acessoADM = true;
+            System.out.println("Acesso concedido para administrador :)");
+            return;
+        }
+
+        for (int i = 0; i < usuarioLogin.length; i++) {
+            if (usuarioLogin[i] != null && loginInput.equals(usuarioLogin[i]) && senhaInput.equals(usuarioSenha[i])) {
+                acessoUsuario = true;
+                System.out.println("Acesso concedido para usuário :)");
+                return;
+            }
+        }
+
+        System.out.println("Acesso Negado!");
+    }
+    
+    public static void cadastroUsuario(){
+        limparTerminal();
+        System.out.println("===============================");
+        System.out.println("      CADASTRO DE USUÁRIO      ");
+        System.out.println("===============================");
+        System.out.print("Usuário: ");
+        String cadastroUsuarioInput = input.next(); 
+        System.out.print("\nSenha: ");
+        String cadastroSenhaInput = input.next();
+
+        for (int i = 0; i < usuarioLogin.length; i++){
+            if (usuarioLogin[i] == null && usuarioSenha[i] == null){
+                usuarioLogin[i] = cadastroUsuarioInput;
+                usuarioSenha[i] = cadastroSenhaInput;
+                System.out.println("Cadastro realizado com sucesso :)");
+                return;
+            }
+
+        }
+    }
+
     public static void fazerDoacao(){
         limparTerminal();
         // Informações sobre doações para a ONG
@@ -84,6 +150,7 @@ public class PetLink {
         voltarMenu();
         
     }
+
     
     public static void voltarMenu(){
         System.out.println("\nDigite algo para voltar ao menu:");
