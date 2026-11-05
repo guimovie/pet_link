@@ -231,14 +231,24 @@ public class PetLink {
         System.out.println("      CADASTRO DE USUÁRIO      ");
         System.out.println("===============================");
         System.out.print("Usuário: ");
-        String cadastroUsuarioInput = input.next(); 
+        String cadastroUsuarioInput = input.next().trim();
         System.out.print("\nSenha: ");
-        String cadastroSenhaInput = input.next();
+        String cadastroSenhaInput = input.next().trim();
+
+        if (cadastroUsuarioInput.equals(admLogin)) {
+            System.out.println("Esse usuário já está cadastrado.");
+            return;
+        }
 
         for (int i = 0; i < usuarioLogin.length; i++){
+            if (cadastroUsuarioInput.equals(usuarioLogin[i])) {
+                System.out.println("Esse usuário já está cadastrado.");
+                return;
+            }
+
             if (usuarioLogin[i] == null && usuarioSenha[i] == null){
-                usuarioLogin[i] = cadastroUsuarioInput.trim();
-                usuarioSenha[i] = cadastroSenhaInput.trim();
+                usuarioLogin[i] = cadastroUsuarioInput;
+                usuarioSenha[i] = cadastroSenhaInput;
                 System.out.println("Cadastro realizado com sucesso :)");
                 return;
             }
