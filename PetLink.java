@@ -29,6 +29,7 @@ public class PetLink {
         usuarioLogin[0] = "joão123";
         usuarioLogin[1] = "jose135";
         usuarioLogin[2] = "maria133";
+
         usuarioSenha[0] = "senha333";
         usuarioSenha[1] = "senha443";
         usuarioSenha[2] = "senha379";
@@ -64,6 +65,7 @@ public class PetLink {
     }
 
     public static void moduloAutenticacao(){
+        // Tela de Login e Cadastro
         limparTerminal();
         System.out.println("==========================");
         System.out.println("       ÁREA DE ACESSO     ");
@@ -98,6 +100,7 @@ public class PetLink {
     }
     
     public static void login(){
+        // Área de login
         limparTerminal();
         System.out.println("=================");
         System.out.println("      LOGIN      ");
@@ -110,15 +113,17 @@ public class PetLink {
         acessoUsuario = false;
         acessoADM = false;
 
-        if (loginInput.equals(admLogin) && senhaInput.equals(admSenha)) {
+        // Compara as informações para ver se bate com perfil de administrador
+        if (loginInput.trim().equals(admLogin) && senhaInput.trim().equals(admSenha)) {
             acessoADM = true;
             System.out.println("Acesso concedido para administrador :)");
             menuAdministrador();
             return;
         }
 
+        // Laço para comparar as informações com a lista de usuário
         for (int i = 0; i < usuarioLogin.length; i++) {
-            if (usuarioLogin[i] != null && loginInput.equals(usuarioLogin[i]) && senhaInput.equals(usuarioSenha[i])) {
+            if (usuarioLogin[i] != null && loginInput.trim().equals(usuarioLogin[i]) && senhaInput.trim().equals(usuarioSenha[i])) {
                 acessoUsuario = true;
                 System.out.println("Acesso concedido para usuário :)");
                 return;
@@ -129,6 +134,7 @@ public class PetLink {
     }
 
     private static void menuAdministrador() {
+        // Caso o acesso seja de adiministrador, o menu de administrador é aberto
         while (acessoADM) {
             limparTerminal();
             System.out.println("===============================");
@@ -231,8 +237,8 @@ public class PetLink {
 
         for (int i = 0; i < usuarioLogin.length; i++){
             if (usuarioLogin[i] == null && usuarioSenha[i] == null){
-                usuarioLogin[i] = cadastroUsuarioInput;
-                usuarioSenha[i] = cadastroSenhaInput;
+                usuarioLogin[i] = cadastroUsuarioInput.trim();
+                usuarioSenha[i] = cadastroSenhaInput.trim();
                 System.out.println("Cadastro realizado com sucesso :)");
                 return;
             }
