@@ -204,6 +204,7 @@ public class PetLink {
             return;
         }
 
+        // Mostra os animais disponíveis varrendo a lista de animais com um laço for
         System.out.println("Animais disponíveis:");
         for (int i = 0; i < quantidadeAnimais; i++) {
             System.out.printf("%d. %s%n", i + 1, animais[i]);
@@ -235,17 +236,20 @@ public class PetLink {
         System.out.print("\nSenha: ");
         String cadastroSenhaInput = input.next().trim();
 
+        // Verifica se o usuário coincide com o do administrador
         if (cadastroUsuarioInput.equals(admLogin)) {
             System.out.println("Esse usuário já está cadastrado.");
             return;
         }
 
         for (int i = 0; i < usuarioLogin.length; i++){
+            // Verifica dentro da lista de usuário se esse usuário já foi utilizado
             if (cadastroUsuarioInput.equals(usuarioLogin[i])) {
                 System.out.println("Esse usuário já está cadastrado.");
                 return;
             }
 
+            // Coloca as informações de usuário e senha no proximo espaço vazio de cada lista
             if (usuarioLogin[i] == null && usuarioSenha[i] == null){
                 usuarioLogin[i] = cadastroUsuarioInput;
                 usuarioSenha[i] = cadastroSenhaInput;
