@@ -2,19 +2,21 @@ import java.util.Scanner;
 public class PetLink {
     private static Scanner input = new Scanner(System.in);
 
-    private static String[] animais = {
-        "Luna (gato)",
-        "Mia (gato)",
-        "Mel (gato)",
-        "Nina (gato)",
-        "Simba (gato)",
-        "Thor (cachorro)",
-        "Bob (cachorro)",
-        "Rex (cachorro)",
-        "Max (cachorro)",
-        "Lola (cachorro)"
-    };
-    private static int quantidadeAnimais = animais.length;
+    private static String[] animais = new String[50];
+    private static int quantidadeAnimais = 10;
+
+    static {
+        animais[0] = "Luna (gato)";
+        animais[1] = "Mia (gato)";
+        animais[2] = "Mel (gato)";
+        animais[3] = "Nina (gato)";
+        animais[4] = "Simba (gato)";
+        animais[5] = "Thor (cachorro)";
+        animais[6] = "Bob (cachorro)";
+        animais[7] = "Rex (cachorro)";
+        animais[8] = "Max (cachorro)";
+        animais[9] = "Lola (cachorro)";
+    }
 
     private static final String admLogin = "adm123"; 
     private static final String admSenha = "senha123"; 
@@ -175,7 +177,11 @@ public class PetLink {
             return;
         }
 
-        garantirCapacidadeAnimais();
+        if (quantidadeAnimais == animais.length) {
+            System.out.println("A lista de animais está cheia (limite de 50).");
+            return;
+        }
+
         animais[quantidadeAnimais] = animal;
         quantidadeAnimais++;
         System.out.println("Animal adicionado com sucesso!");
@@ -213,16 +219,6 @@ public class PetLink {
         System.out.printf("%s foi retirado da lista.%n", animalRemovido);
     }
 
-    private static void garantirCapacidadeAnimais() {
-        if (quantidadeAnimais == animais.length) {
-            String[] novosAnimais = new String[animais.length * 2];
-            for (int i = 0; i < animais.length; i++) {
-                novosAnimais[i] = animais[i];
-            }
-            animais = novosAnimais;
-        }
-    }
-    
     public static void cadastroUsuario(){
         limparTerminal();
         System.out.println("===============================");
