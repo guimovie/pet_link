@@ -18,12 +18,20 @@ public class PetLink {
         animais[9] = "Lola (cachorro)";
     }
 
-    private static final String admLogin = "adm123"; 
-    private static final String admSenha = "senha123"; 
+    private static final String ADM_LOGIN = "adm123";
+    private static final String ADM_SENHA = "senha123";
     private static String[] usuarioLogin = new String[20];
     private static String[] usuarioSenha = new String[20];
     private static boolean acessoADM = false;
     private static boolean acessoUsuario = false;
+    private static String usuarioLogado;
+    private static final int MAX_SOLICITACOES = 50;
+    private static final int SOLICITACAO_PENDENTE = 0;
+    private static final int SOLICITACAO_APROVADA = 1;
+    private static final int SOLICITACAO_NEGADA = 2;
+    private static String[] solicitacaoUsuario = new String[MAX_SOLICITACOES];
+    private static String[] solicitacaoAnimal = new String[MAX_SOLICITACOES];
+    private static int[] solicitacaoStatus = new int[MAX_SOLICITACOES];
 
     static {
         usuarioLogin[0] = "joão123";
@@ -59,7 +67,76 @@ public class PetLink {
         if (n < 1 || n > quantidadeAnimais) {
             System.out.println("Selecione um número válido!");
         } else {
-            System.out.printf("O animal escolhido foi %s%n", animais[n - 1]);
+            if (!acessoUsuario) {
+                System.out.println("Faça login como usuário para solicitar um animal.");
+            } else {
+                solicitarAnimal(n - 1);
+            }
+        }
+        voltarMenu();
+    }
+
+    private static void solicitarAnimal(int indiceAnimal) {
+        String animal = animais[indiceAnimal];
+        for (int i = 0; i < MAX_SOLICITACOES; i++) {
+            if (solicitacaoStatus[i] == SOLICITACAO_PENDENTE
+                    && animal.equals(solicitacaoAnimal[i])) {
+                System.out.println("Já existe uma solicitação pendente para esse animal.");
+                return;
+            }
+        }
+
+        System.out.printf("Deseja solicitar %s? (1 - Sim, 2 - Não): ", animal);
+        int confirmacao = input.nextInt();
+        if (confirmacao != 1) {
+            System.out.println("Solicitação cancelada.");
+            return;
+        }
+
+        for (int i = 0; i < MAX_SOLICITACOES; i++) {
+            if (solicitacaoUsuario[i] == null) {
+                solicitacaoUsuario[i] = usuarioLogado;
+                solicitacaoAnimal[i] = animal;
+                solicitacaoStatus[i] = SOLICITACAO_PENDENTE;
+                System.out.println("Solicitação enviada. Você poderá consultar o resultado no menu.");
+                return;
+            }
+        }
+
+        System.out.println("Não foi possível enviar: o limite de solicitações foi atingido.");
+    }
+
+    private static void minhasSolicitacoes() {
+        if (!acessoUsuario) {
+            System.out.println("Faça login para consultar suas solicitações.");
+            voltarMenu();
+            return;
+        }
+        limparTerminal();
+        System.out.println("===============================");
+        System.out.println("     MINHAS SOLICITAÇÕES       ");
+        System.out.println("===============================");
+        boolean encontrou = false;
+        for (int i = 0; i < MAX_SOLICITACOES; i++) {
+            if (usuarioLogado.equals(solicitacaoUsuario[i])) {
+                String status;
+                switch (solicitacaoStatus[i]) {
+                    case SOLICITACAO_APROVADA:
+                        status = "Aprovada";
+                        break;
+                    case SOLICITACAO_NEGADA:
+                        status = "Negada";
+                        break;
+                    default:
+                        status = "Pendente";
+                        break;
+                }
+                System.out.printf("%s - %s%n", solicitacaoAnimal[i], status);
+                encontrou = true;
+            }
+        }
+        if (!encontrou) {
+            System.out.println("Você ainda não fez solicitações.");
         }
         voltarMenu();
     }
@@ -112,9 +189,10 @@ public class PetLink {
 
         acessoUsuario = false;
         acessoADM = false;
+        usuarioLogado = null;
 
         // Compara as informações para ver se bate com perfil de administrador
-        if (loginInput.trim().equals(admLogin) && senhaInput.trim().equals(admSenha)) {
+        if (loginInput.trim().equals(ADM_LOGIN) && senhaInput.trim().equals(ADM_SENHA)) {
             acessoADM = true;
             System.out.println("Acesso concedido para administrador :)");
             menuAdministrador();
@@ -125,6 +203,7 @@ public class PetLink {
         for (int i = 0; i < usuarioLogin.length; i++) {
             if (usuarioLogin[i] != null && loginInput.trim().equals(usuarioLogin[i]) && senhaInput.trim().equals(usuarioSenha[i])) {
                 acessoUsuario = true;
+                usuarioLogado = usuarioLogin[i];
                 System.out.println("Acesso concedido para usuário :)");
                 return;
             }
@@ -142,7 +221,8 @@ public class PetLink {
             System.out.println("===============================");
             System.out.println("1. Adicionar animal");
             System.out.println("2. Retirar animal");
-            System.out.println("3. Sair da área administrativa");
+            System.out.println("3. Analisar solicitações de adoção");
+            System.out.println("4. Sair da área administrativa");
             System.out.print("Escolha uma opção: ");
             int opcao = input.nextInt();
 
@@ -154,6 +234,9 @@ public class PetLink {
                     retirarAnimal();
                     break;
                 case 3:
+                    analisarSolicitacoes();
+                    break;
+                case 4:
                     acessoADM = false;
                     System.out.println("Você saiu da área administrativa.");
                     break;
@@ -217,13 +300,94 @@ public class PetLink {
             return;
         }
 
+        String animalSelecionado = animais[numero - 1];
+        for (int i = 0; i < MAX_SOLICITACOES; i++) {
+            if (solicitacaoStatus[i] == SOLICITACAO_PENDENTE
+                    && animalSelecionado.equals(solicitacaoAnimal[i])) {
+                System.out.println("Esse animal tem uma solicitação pendente. Analise-a antes de retirar o animal.");
+                return;
+            }
+        }
+
+        System.out.printf("Confirma a exclusão de %s? (1 - Sim, 2 - Não): ", animalSelecionado);
+        int confirmacao = input.nextInt();
+        if (confirmacao != 1) {
+            System.out.println("Exclusão cancelada.");
+            return;
+        }
+
         String animalRemovido = animais[numero - 1];
-        for (int i = numero - 1; i < quantidadeAnimais - 1; i++) {
+        removerAnimalDaLista(numero - 1);
+        System.out.printf("%s foi retirado da lista.%n", animalRemovido);
+    }
+
+    private static void analisarSolicitacoes() {
+        if (!acessoADM) {
+            System.out.println("Acesso negado. Apenas o administrador pode analisar solicitações.");
+            return;
+        }
+
+        boolean encontrou = false;
+        System.out.println("Solicitações pendentes:");
+        for (int i = 0; i < MAX_SOLICITACOES; i++) {
+            if (solicitacaoStatus[i] == SOLICITACAO_PENDENTE
+                    && solicitacaoUsuario[i] != null) {
+                System.out.printf("%d. %s solicitou %s%n",
+                        i + 1, solicitacaoUsuario[i], solicitacaoAnimal[i]);
+                encontrou = true;
+            }
+        }
+        if (!encontrou) {
+            System.out.println("Não há solicitações pendentes.");
+            return;
+        }
+
+        System.out.print("Digite o número da solicitação para analisar (0 para voltar): ");
+        int numero = input.nextInt();
+        if (numero == 0) {
+            return;
+        }
+        if (numero < 1 || numero > MAX_SOLICITACOES
+                || solicitacaoStatus[numero - 1] != SOLICITACAO_PENDENTE
+                || solicitacaoUsuario[numero - 1] == null) {
+            System.out.println("Número de solicitação inválido.");
+            return;
+        }
+
+        int indice = numero - 1;
+        System.out.printf("%s solicitou %s.%n", solicitacaoUsuario[indice], solicitacaoAnimal[indice]);
+        System.out.print("1. Aprovar  2. Negar: ");
+        int decisao = input.nextInt();
+        if (decisao == 1) {
+            solicitacaoStatus[indice] = SOLICITACAO_APROVADA;
+            removerAnimalDaLista(buscarAnimal(solicitacaoAnimal[indice]));
+            System.out.println("Solicitação aprovada. O usuário poderá consultar o resultado.");
+        } else if (decisao == 2) {
+            solicitacaoStatus[indice] = SOLICITACAO_NEGADA;
+            System.out.println("Solicitação negada. O usuário poderá consultar o resultado.");
+        } else {
+            System.out.println("Opção inválida. A solicitação continua pendente.");
+        }
+    }
+
+    private static int buscarAnimal(String animal) {
+        for (int i = 0; i < quantidadeAnimais; i++) {
+            if (animal.equals(animais[i])) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static void removerAnimalDaLista(int indice) {
+        if (indice < 0 || indice >= quantidadeAnimais) {
+            return;
+        }
+        for (int i = indice; i < quantidadeAnimais - 1; i++) {
             animais[i] = animais[i + 1];
         }
         quantidadeAnimais--;
         animais[quantidadeAnimais] = null;
-        System.out.printf("%s foi retirado da lista.%n", animalRemovido);
     }
 
     public static void cadastroUsuario(){
@@ -237,7 +401,7 @@ public class PetLink {
         String cadastroSenhaInput = input.next().trim();
 
         // Verifica se o usuário coincide com o do administrador
-        if (cadastroUsuarioInput.equals(admLogin)) {
+        if (cadastroUsuarioInput.equals(ADM_LOGIN)) {
             System.out.println("Esse usuário já está cadastrado.");
             return;
         }
@@ -304,8 +468,9 @@ public class PetLink {
             System.out.println("============================");
             System.out.println("1 - Ver animais disponiveis");
             System.out.println("2 - Cadastro / Login");
-            System.out.println("3 - Doação");
-            System.out.println("4 - Sair");
+            System.out.println("3 - Minhas solicitações");
+            System.out.println("4 - Doação");
+            System.out.println("5 - Sair");
             System.out.println("============================");
             System.out.println("    SELECIONE UMA OPÇÃO     ");
             escolha = input.nextInt();
@@ -318,9 +483,12 @@ public class PetLink {
                     moduloAutenticacao();;
                     break;
                 case 3:
-                    fazerDoacao();
+                    minhasSolicitacoes();
                     break;
                 case 4:
+                    fazerDoacao();
+                    break;
+                case 5:
                     limparTerminal();
                     System.out.println("Saindo...");
                     break;
@@ -329,7 +497,7 @@ public class PetLink {
                     break;
             }
 
-        } while (escolha != 4); 
+        } while (escolha != 5);
 
         input.close();
     }
